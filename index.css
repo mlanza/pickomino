@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald&family=Lobster&display=swap');
+body {
+  background-image: url("/images/connected.jpg");
+}
+.tiles ul,
+.players ul {
+  list-style: none;
+}
+ul.stack {
+  margin: auto 0;
+  width: 2em;
+  height: 8em;
+  display: inline-block;
+}
+.players {
+  margin: auto 0;
+  display: block;
+  text-align: center;
+}
+.players .name {
+  font-family: "Oswald";
+  font-size: 1.2em;
+}
+.players > ul > li {
+  display: inline-block;
+  margin: .5em;
+  padding: 1em;
+  width: 4.5em;
+}
+li.tile.taken {
+  visibility: hidden;
+}
+li.tile {
+  display: inline-block;
+  text-align: center;
+  border: solid 1px dimgray;
+  width: 3em;
+  height: 6em;
+  border-radius: 5px;
+  margin: .5em;
+  background-color: white;
+  padding: .25em;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.5);
+  overflow: hidden;
+}
+li.tile .rank {
+  font-size: 2em;
+  font-family: Lobster, cursive;
+}
+li.tile .worms {
+  font-size: 1.25em;
+}
+li.tile[worms="1"] .worms::after {
+  content: "🪱"
+}
+li.tile[worms="2"] .worms::after {
+  content: "🪱🪱"
+}
+li.tile[worms="3"] .worms::after {
+  content: "🪱🪱🪱"
+}
+li.tile[worms="4"] .worms::after {
+  content: "🪱🪱🪱🪱"
+}

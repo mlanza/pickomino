@@ -80,7 +80,7 @@ export function finish(state){
   const {up, players, tiles} = state;
   const n = up + 1;
   const status = _.count(tiles) ? "ready" : "over";
-  return {...state, rolled: [], banked: [], status, up: n > _.count(players) ? 0 : n};
+  return roll({...state, rolled: [], banked: [], status, up: n >= _.count(players) ? 0 : n});
 }
 
 export function claim(v){
@@ -93,8 +93,7 @@ export function claim(v){
       _.chain(state,
         _.updateIn(_, ["players", up, "stack"], _.prepend(_, _.first(took))),
         _.assocIn(_, ["tiles"], left),
-        finish,
-        roll) :
+        finish) :
       state;
   }
 }
