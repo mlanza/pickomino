@@ -5,6 +5,7 @@ import dom from "./lib/@atomic/dom.js";
 
 const el = dom.sel1("#pickomino"),
       tiles = dom.sel1(".tiles", el),
+      r = dom.sel1(".roll", el),
       dice = dom.sel1(".dice", el),
       players = dom.sel1(".players", el);
 
@@ -25,21 +26,32 @@ Object.assign(window, {_, $, dom}, {$state}, {bank, roll, claim, steal});
 const $hist = $.hist($state);
 
 function renderTile(tile){
-  return li({class: "tile", id: "tile-" + tile.value, worms: tile.worms}, div({class: "rank"}, tile.value), div({class: "worms"}));
+  return li({class: "tile", id: "tile-" + tile.rank, "data-rank": tile.rank, "data-worms": tile.worms}, div({class: "rank"}, tile.rank), div({class: "worms"}));
 }
 
 function renderTiles(state){
   return ul(_.mapa(renderTile, state.tiles));
 }
 
+function renderDie(die){
+  return li({"data-value": die}, die ? die : "🪱");
+}
+
+function renderDice(state){
+  const total = _.sum(_.map(function(n){
+    return n === 0 ? 5 : n;
+  }, state.banked));
+  return [_.count(state.rolled) ? ul(_.mapa(renderDie, state.rolled)) : null, _.count(state.banked) ? ul(_.mapa(renderDie, state.banked)) : null, _.count(state.banked) ? span(" = ", total) : null ];
+}
+
 function renderPlayers(state){
-  return ul(_.mapa(function(player){
-    return li({name: player.name},
+  return ul(_.mapIndexed(function(idx, player){
+    return li({name: player.name, "data-active": idx === state.up},
+      div({class: "roll"}, "🎲"),
       div({class: "name"}, player.name),
       ul({class: "stack"}, _.mapa(renderTile, player.stack)));
   }, state.players));
 }
-
 
 function move(start, end){
   const [sx, sy] = getOffset(start),
@@ -52,23 +64,43 @@ function move(start, end){
   setTimeout(function(){
     dom.addClass(start, "taken");
     dom.addClass(el, "end");
+    setTimeout(function(){
+      //dom.omit(el);
+    }, 600)
   }, 10)
 }
 
-/*function renderDice(state){
-  return ul(_.mapa(function(die){
+$.on(el, "click", "div.roll", function(e){
+  _.swap($state, roll);
+});
 
-  }, state.rolled))
-}*/
+$.on(dice, "click", "ul:first-child > li", function(e){
+  const text = dom.text(e.target);
+  const value = text === "🪱" ? 0 : parseInt(text);
+  _.swap($state, bank(value));
+})
 
-$.sub($hist, function([curr, prior]){
-  dom.html(tiles, renderTiles(curr));
-  dom.html(players, renderPlayers(curr));
+$.on(tiles, "click", ".tile", function(e){
+  const rank = parseInt(dom.attr(this, "data-rank"));
+  _.swap($state, claim(rank));
+});
 
+$.on(players, "click", ".stack .tile", function(e){
+  const rank = parseInt(dom.attr(this, "data-rank"));
+  _.swap($state, steal(rank));
+});
+
+$.sub($hist, function([current, prior]){
+  dom.html(tiles, renderTiles(current));
+  dom.html(dice, renderDice(current));
+  dom.html(players, renderPlayers(current));
+
+  /*
   const t23 = dom.sel1("#tile-23"),
         avas = dom.sel1("[name='Ava'] .stack");
 
   setTimeout(function(){
     move(t23, avas);
   }, 500)
+  */
 });

@@ -11,8 +11,8 @@ export function init(names){
   return {up, status, rolled, banked, players, tiles};
 }
 
-export const tiles = _.mapa(function(worms, value){
-  return {worms, value};
+export const tiles = _.mapa(function(worms, rank){
+  return {worms, rank};
 }, _.concat(_.repeat(4, 1), _.repeat(4, 2), _.repeat(4, 3), _.repeat(4, 4)), _.iterate(_.inc, 21));
 
 export function rollDice(n){
@@ -30,7 +30,7 @@ export function fail(state){
   const tile = _.chain(state, _.getIn(_, ["players", up, "stack"]), _.first);
   if (tile) {
     const ref = _.count(_.takeWhile(function(t){
-      return tile.value < t.value;
+      return tile.rank < t.rank;
     }, tiles));
     return _.chain(state,
       _.updateIn(_, ["players", up, "stack"], _.rest),
@@ -58,7 +58,7 @@ export function bank(n){
   return function(state){
     const {banked, rolled, status} = state;
     const {"true": claimed, "false": unclaimed} = _.groupBy(_.and(_.eq(n, _), _.complement(_.includes(banked, _))), rolled);
-    const _banked = _.sort(_.concat(claimed, banked));
+    const _banked = _.toArray(_.concat(claimed, banked));
     return _.count(claimed) && status === "success" ? _.chain({...state, status: "banked", rolled: unclaimed, banked: _banked}, hasWorm(_banked) ? _.identity : roll) : state;
   }
 }
@@ -69,10 +69,10 @@ export function worth(banked){
   }, banked));
 }
 
-export function exposed(players, up, v){
+export function exposed(players, up, r){
   return _.first(_.keepIndexed(function(idx, {stack}){
-    const {worms, value} = _.first(stack) || {};
-    return value === v && idx !== up ? idx : null;
+    const {worms, rank} = _.first(stack) || {};
+    return rank === r && idx !== up ? idx : null;
   }, players));
 }
 
@@ -83,13 +83,13 @@ export function finish(state){
   return roll({...state, rolled: [], banked: [], status, up: n >= _.count(players) ? 0 : n});
 }
 
-export function claim(v){
+export function claim(r){
   return function(state){
     const {up, banked, tiles} = state;
-    const {"true": took, "false": left} = _.groupBy(function({worms, value}){
-      return value === v;
+    const {"true": took, "false": left} = _.groupBy(function({worms, rank}){
+      return rank === r;
     }, tiles);
-    return v <= worth(banked) && _.count(took) && hasWorm(banked) ?
+    return r <= worth(banked) && _.count(took) && hasWorm(banked) ?
       _.chain(state,
         _.updateIn(_, ["players", up, "stack"], _.prepend(_, _.first(took))),
         _.assocIn(_, ["tiles"], left),

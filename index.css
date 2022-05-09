@@ -1,6 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald&family=Lobster&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald&family=Bebas+Neue&family=Lobster&display=swap');
 body {
   background-image: url("/images/connected.jpg");
+}
+ul {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+h1 {
+  text-align: center;
+  font-family: Lobster;
+}
+.dice {
+  font-family: "Bebas Neue";
+  height: 6em;
+}
+.dice li {
+  background-color: white;
+}
+.dice ul:first-child {
+  margin-bottom: 1em;
+}
+.dice ul:first-child > li {
+  cursor: pointer;
+}
+.dice span {
+  font-family: Lobster;
+  font-size: 2.5em;
+}
+.roll {
+  font-size: 3em;
+  cursor: pointer;
+  text-align: center;
+}
+.tiles {
+  text-align: center;
 }
 .tiles ul,
 .players ul {
@@ -8,9 +42,165 @@ body {
 }
 ul.stack {
   margin: auto 0;
-  width: 2em;
+  width: 4.5em;
   height: 8em;
   display: inline-block;
+  position: relative;
+}
+ul.stack li.tile {
+  z-index: 160;
+  left: 0;
+  position: absolute;
+}
+ul.stack li.tile + li.tile {
+  top: 10px;
+  z-index: 150;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile {
+  top: 100px;
+  z-index: 150;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile {
+  top: 20px;
+  z-index: 140;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile {
+  top: 200px;
+  z-index: 140;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile {
+  top: 30px;
+  z-index: 130;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile {
+  top: 300px;
+  z-index: 130;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 40px;
+  z-index: 120;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 400px;
+  z-index: 120;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 50px;
+  z-index: 110;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 500px;
+  z-index: 110;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 60px;
+  z-index: 100;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 600px;
+  z-index: 100;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 70px;
+  z-index: 90;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 700px;
+  z-index: 90;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 80px;
+  z-index: 80;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 800px;
+  z-index: 80;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 90px;
+  z-index: 70;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 900px;
+  z-index: 70;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 100px;
+  z-index: 60;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 1000px;
+  z-index: 60;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 110px;
+  z-index: 50;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 1100px;
+  z-index: 50;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 120px;
+  z-index: 40;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 1200px;
+  z-index: 40;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 130px;
+  z-index: 30;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 1300px;
+  z-index: 30;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 140px;
+  z-index: 20;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 1400px;
+  z-index: 20;
+  transition: all .6s ease-in-out;
+}
+ul.stack li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 150px;
+  z-index: 10;
+  transition: all .6s ease-in-out;
+}
+ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.tile {
+  top: 1500px;
+  z-index: 10;
+  transition: all .6s ease-in-out;
 }
 .players {
   margin: auto 0;
@@ -19,15 +209,23 @@ ul.stack {
 }
 .players .name {
   font-family: "Oswald";
-  font-size: 1.2em;
+  font-size: 1.4em;
 }
 .players > ul > li {
   display: inline-block;
-  margin: .5em;
+  margin: 1em;
   padding: 1em;
   width: 4.5em;
 }
 li.tile.taken {
+  border-color: transparent;
+  background-color: transparent;
+  box-shadow: none;
+}
+li.tile.taken .rank {
+  opacity: .2;
+}
+li.tile.taken .worms {
   visibility: hidden;
 }
 li.tile {
@@ -42,6 +240,7 @@ li.tile {
   padding: .25em;
   box-shadow: 0 3px 10px rgb(0 0 0 / 0.5);
   overflow: hidden;
+  cursor: pointer;
 }
 li.tile .rank {
   font-size: 2em;
@@ -50,15 +249,43 @@ li.tile .rank {
 li.tile .worms {
   font-size: 1.25em;
 }
-li.tile[worms="1"] .worms::after {
+li.tile[data-worms="1"] .worms::after {
   content: "🪱"
 }
-li.tile[worms="2"] .worms::after {
+li.tile[data-worms="2"] .worms::after {
   content: "🪱🪱"
 }
-li.tile[worms="3"] .worms::after {
+li.tile[data-worms="3"] .worms::after {
   content: "🪱🪱🪱"
 }
-li.tile[worms="4"] .worms::after {
+li.tile[data-worms="4"] .worms::after {
   content: "🪱🪱🪱🪱"
+}
+.tiles {
+  margin-bottom: 2em;
+}
+.dice {
+  text-align: center;
+  font-family: Oswald;
+}
+.dice ul > li {
+  display: inline-block;
+  margin: .5em;
+  border-radius: 5px;
+  border: solid 1px dimgray;
+  padding: 1em;
+  height: 1.25em;
+  width: 1.25em;
+  line-height: 1.25em;
+  text-align: center;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.5);
+}
+.dice ul + ul {
+  font-size: 1.3em;
+}
+.players li[data-active] .roll {
+  visibility: hidden;
+}
+.players li[data-active="true"] .roll {
+  visibility: visible;
 }
