@@ -41,7 +41,7 @@ function renderDice(state){
   const total = _.sum(_.map(function(n){
     return n === 0 ? 5 : n;
   }, state.banked));
-  return [ul(_.mapa(renderDie, state.rolled)), ul(_.mapa(renderDie, state.banked)), _.count(state.banked) ? span(" = ", total) : null];
+  return [ul({"data-banked": _.join(" ", _.unique(state.banked))}, _.mapa(renderDie, state.rolled)), ul(_.mapa(renderDie, state.banked)), _.count(state.banked) ? span(" = ", total) : null];
 }
 
 function renderPlayers(state){

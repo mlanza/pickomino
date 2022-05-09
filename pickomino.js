@@ -16,7 +16,9 @@ export const tiles = _.mapa(function(worms, rank){
 }, _.concat(_.repeat(4, 1), _.repeat(4, 2), _.repeat(4, 3), _.repeat(4, 4)), _.iterate(_.inc, 21));
 
 export function rollDice(n){
-  return _.sort(_.repeatedly(n, _.partial(_.randInt, 6)));
+  return _.sort(_.asc(function(x){
+    return x === 0 ? 6 : x;
+  }), _.repeatedly(n, _.partial(_.randInt, 6)));
 }
 
 export function bankable(banked, rolled){
@@ -51,7 +53,7 @@ export function roll(state){
     case "banked":
       const {banked, rolled} = state;
       const dice = rollDice(_.count(banked) ? _.count(rolled) : 8);
-      const status = _.count(rolled) === 0 || bankable(banked, dice) ? "success" : "failure";
+      const status = _.count(_.concat(rolled, banked)) === 0 || bankable(banked, dice) ? "success" : "failure";
       return {...state, status, rolled: dice};
     case "failure":
       return fail(state);
