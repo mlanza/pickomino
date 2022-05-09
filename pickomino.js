@@ -30,13 +30,15 @@ export function fail(state){
   const tile = _.chain(state, _.getIn(_, ["players", up, "stack"]), _.first);
   if (tile) {
     const ref = _.count(_.takeWhile(function(t){
-      return tile.rank < t.rank;
+      return t.rank < tile.rank;
     }, tiles));
     return _.chain(state,
       _.updateIn(_, ["players", up, "stack"], _.rest),
       _.update(_, "tiles", _.pipe(
-        _.before(_, ref, tile),
-        _.butlast)),
+        _.splice(_, ref, [tile]),
+        _.toArray,
+        _.butlast,
+        _.toArray)),
         finish);
   } else {
     return finish(state);
@@ -44,13 +46,17 @@ export function fail(state){
 }
 
 export function roll(state){
-  if (_.includes(["ready", "banked"], _.get(state, "status"))) {
-    const {banked, rolled} = state;
-    const dice = rollDice(_.count(banked) ? _.count(rolled) : 8);
-    const status = _.count(rolled) === 0 || bankable(banked, dice) ? "success" : "failure";
-    return _.chain({...state, status, rolled: dice}, status === "success" ? _.identity : fail);
-  } else {
-    return state;
+  switch(_.get(state, "status")) {
+    case "ready":
+    case "banked":
+      const {banked, rolled} = state;
+      const dice = rollDice(_.count(banked) ? _.count(rolled) : 8);
+      const status = _.count(rolled) === 0 || bankable(banked, dice) ? "success" : "failure";
+      return {...state, status, rolled: dice};
+    case "failure":
+      return fail(state);
+    default:
+      return state;
   }
 }
 
@@ -80,7 +86,7 @@ export function finish(state){
   const {up, players, tiles} = state;
   const n = up + 1;
   const status = _.count(tiles) ? "ready" : "over";
-  return roll({...state, rolled: [], banked: [], status, up: n >= _.count(players) ? 0 : n});
+  return {...state, rolled: [], banked: [], status, up: n >= _.count(players) ? 0 : n};
 }
 
 export function claim(r){

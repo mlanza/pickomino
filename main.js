@@ -41,7 +41,7 @@ function renderDice(state){
   const total = _.sum(_.map(function(n){
     return n === 0 ? 5 : n;
   }, state.banked));
-  return [_.count(state.rolled) ? ul(_.mapa(renderDie, state.rolled)) : null, _.count(state.banked) ? ul(_.mapa(renderDie, state.banked)) : null, _.count(state.banked) ? span(" = ", total) : null ];
+  return [ul(_.mapa(renderDie, state.rolled)), ul(_.mapa(renderDie, state.banked)), _.count(state.banked) ? span(" = ", total) : null];
 }
 
 function renderPlayers(state){
@@ -91,6 +91,7 @@ $.on(players, "click", ".stack .tile", function(e){
 });
 
 $.sub($hist, function([current, prior]){
+  dom.attr(el, "data-status", current.status);
   dom.html(tiles, renderTiles(current));
   dom.html(dice, renderDice(current));
   dom.html(players, renderPlayers(current));
