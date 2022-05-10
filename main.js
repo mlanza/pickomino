@@ -21,7 +21,8 @@ function getOffset(el) {
   return [rect.left + window.scrollX, rect.top + window.scrollY];
 }
 
-const $state = $.cell(p.init(["Mario", "Jennabel"]));
+const params = (new URL(document.location)).searchParams;
+const $state = $.cell(p.init(params.get('players').split(",")));
 Object.assign(window, {_, $, dom}, {$state});
 
 const $hist = $.hist($state);
