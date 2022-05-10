@@ -8,7 +8,8 @@ export function init(names){
   }, names);
   const rolled = [];
   const banked = [];
-  return {up, status, rolled, banked, players, tiles};
+  const removed = [];
+  return {up, status, rolled, banked, players, tiles, removed};
 }
 
 export const tiles = _.mapa(function(worms, rank){
@@ -27,6 +28,13 @@ export function bankable(banked, rolled){
 
 export const hasWorm = _.includes(_, 0);
 
+export function flip(state){
+  const hardest = _.last(state.tiles);
+  return _.chain(state,
+    _.update(_, "tiles", _.comp(_.toArray, _.butlast)),
+    _.update(_, "removed", _.conj(_, hardest)));
+}
+
 export function fail(state){
   const {up, tiles} = state;
   const tile = _.chain(state, _.getIn(_, ["players", up, "stack"]), _.first);
@@ -39,9 +47,9 @@ export function fail(state){
       _.updateIn(_, ["players", up], score),
       _.update(_, "tiles", _.pipe(
         _.splice(_, ref, [tile]),
-        _.toArray,
-        _.butlast,
         _.toArray)),
+        flip,
+        _.see("flipped"),
         finish);
   } else {
     return finish(state);

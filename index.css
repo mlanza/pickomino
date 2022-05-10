@@ -258,15 +258,17 @@ ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.ti
   padding: 1em;
   width: 4.5em;
 }
-li.tile.taken {
+li.tile[data-status="claimed"] {
   border-color: transparent;
   background-color: transparent;
   box-shadow: none;
 }
-li.tile.taken .rank {
+li.tile[data-status="claimed"] .rank {
   opacity: .2;
 }
-li.tile.taken .worms {
+li.tile[data-status="removed"] .rank,
+li.tile[data-status="removed"] .worms,
+li.tile[data-status="claimed"] .worms {
   visibility: hidden;
 }
 li.tile {

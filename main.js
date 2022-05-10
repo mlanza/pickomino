@@ -1,4 +1,4 @@
-import {init, bank, roll, claim, steal, winner} from "./pickomino.js";
+import * as p from "./pickomino.js";
 import _ from "./lib/@atomic/core.js";
 import $ from "./lib/@atomic/reactives.js";
 import dom from "./lib/@atomic/dom.js";
@@ -21,17 +21,21 @@ function getOffset(el) {
   return [rect.left + window.scrollX, rect.top + window.scrollY];
 }
 
-const $state = $.cell(init(["Mario", "Ava", "Zoe"]));
-Object.assign(window, {_, $, dom}, {$state}, {bank, roll, claim, steal});
+const $state = $.cell(p.init(["Mario", "Jennabel"]));
+Object.assign(window, {_, $, dom}, {$state});
 
 const $hist = $.hist($state);
 
-function renderTile(tile){
-  return li({class: "tile", id: "tile-" + tile.rank, "data-rank": tile.rank, "data-worms": tile.worms}, div({class: "rank"}, tile.rank), div({class: "worms"}));
+function renderTile(remaining, removed){
+  const xs = _.mapa(_.get(_, "rank"), remaining);
+  const ys = _.mapa(_.get(_, "rank"), removed);
+  return function(tile){
+    return li({class: "tile", id: "tile-" + tile.rank, "data-rank": tile.rank, "data-worms": tile.worms, "data-status": _.includes(xs, tile.rank) ? "unclaimed" : _.includes(ys, tile.rank) ? "removed" : "claimed"}, div({class: "rank"}, tile.rank), div({class: "worms"}));
+  }
 }
 
 function renderTiles(state){
-  return ul(_.mapa(renderTile, state.tiles));
+  return ul(_.mapa(renderTile(state.tiles, state.removed), p.tiles));
 }
 
 function renderDie(die){
@@ -51,12 +55,12 @@ function renderPlayers(state){
         div({class: "score"}, player.score),
         div({class: "roll"}, "🎲"),
         div({class: "name"}, player.name),
-        ul({class: "stack"}, _.mapa(renderTile, player.stack)));
+        ul({class: "stack"}, _.mapa(renderTile(player.stack, []), player.stack)));
   }, state.players));
 }
 
 function renderWinner(state){
-  return _.chain(state.players, winner, _.get(_, "name"), _.str(_, " wins!"));
+  return _.chain(state.players, p.winner, _.get(_, "name"), _.str(_, " wins!"));
 }
 
 function move(start, end){
@@ -77,23 +81,23 @@ function move(start, end){
 }
 
 $.on(el, "click", "div.roll", function(e){
-  _.swap($state, roll);
+  _.swap($state, p.roll);
 });
 
 $.on(dice, "click", "ul:first-child > li", function(e){
   const text = dom.text(e.target);
   const value = text === "🪱" ? 0 : parseInt(text);
-  _.swap($state, bank(value));
+  _.swap($state, p.bank(value));
 })
 
 $.on(tiles, "click", ".tile", function(e){
   const rank = parseInt(dom.attr(this, "data-rank"));
-  _.swap($state, claim(rank));
+  _.swap($state, p.claim(rank));
 });
 
 $.on(players, "click", ".stack .tile", function(e){
   const rank = parseInt(dom.attr(this, "data-rank"));
-  _.swap($state, steal(rank));
+  _.swap($state, p.steal(rank));
 });
 
 $.sub($hist, function([current, prior]){
