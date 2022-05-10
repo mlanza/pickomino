@@ -310,22 +310,19 @@ li.tile[data-worms="4"] .worms::after {
 [data-status="success"] .players li[data-active="true"] .roll {
   opacity: .3;
 }
-.players .pos {
+.players .score {
   visibility: hidden;
   font-family: Oswald;
-  font-size: 2em;
-  height: 2em;
+  font-size: 1.25em;
 }
-.players .score {
-  display: none;
+.players .winner {
+  visibility: hidden;
   font-family: Oswald;
-  font-size: 3em;
+  font-size: 4em;
 }
-[data-status="over"] .players .pos {
-  visibility: visible;
-}
+[data-status="over"] .players .winner,
 [data-status="over"] .players .score {
-  display: inherit;
+  visibility: visible;
 }
 [data-status="over"] .players .roll {
   display: none;

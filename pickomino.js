@@ -85,11 +85,8 @@ export function exposed(players, up, r){
   }, players));
 }
 
-export function rank(players){
-  const ranked = _.sort(_.desc(_.get(_, "score")), _.desc(_.get(_, "best")), players);
-  return _.mapa(function(player){
-    return Object.assign(player, {pos: _.indexOf(ranked, player) + 1});
-  }, players);
+export function winner(players){
+  return _.chain(players, _.sort(_.desc(_.get(_, "score")), _.desc(_.get(_, "best")), _), _.first);
 }
 
 export function finish(state){

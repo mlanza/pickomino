@@ -1,4 +1,4 @@
-import {init, bank, roll, claim, steal} from "./pickomino.js";
+import {init, bank, roll, claim, steal, winner} from "./pickomino.js";
 import _ from "./lib/@atomic/core.js";
 import $ from "./lib/@atomic/reactives.js";
 import dom from "./lib/@atomic/dom.js";
@@ -45,14 +45,15 @@ function renderDice(state){
 }
 
 function renderPlayers(state){
-  return ul(_.mapIndexed(function(idx, player){
-    return li({name: player.name, "data-active": idx === state.up},
-      div({class: "pos"}, player.pos),
-      div({class: "roll"}, "🎲"),
-      div({class: "score"}, player.score),
-      div({class: "name"}, player.name),
-      ul({class: "stack"}, _.mapa(renderTile, player.stack)));
-  }, state.players));
+  return [
+    div({class: "winner"}, _.chain(state.players, winner, _.get(_, "name"), _.str(_, " wins!"))),
+    ul(_.mapIndexed(function(idx, player){
+      return li({name: player.name, "data-active": idx === state.up},
+        div({class: "score"}, player.score),
+        div({class: "roll"}, "🎲"),
+        div({class: "name"}, player.name),
+        ul({class: "stack"}, _.mapa(renderTile, player.stack)));
+  }, state.players))];
 }
 
 function move(start, end){
