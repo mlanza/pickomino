@@ -55,7 +55,7 @@ export function roll(state){
       const {banked, rolled} = state;
       const dice = rollDice(_.count(banked) ? _.count(rolled) : 8);
       const status = _.count(_.concat(rolled, banked)) === 0 || bankable(banked, dice) ? "success" : "failure";
-      return {...state, status, rolled: dice};
+      return {...state, status, rolled: _.sort(_.desc(_.includes(banked, _)), dice)};
     case "failure":
       return fail(state);
     default:
@@ -93,10 +93,7 @@ export function finish(state){
   const {up, players, tiles} = state;
   const n = up + 1;
   const status = _.count(tiles) ? "ready" : "over";
-  return _.chain({...state, rolled: [], banked: [], status, up: n >= _.count(players) ? 0 : n},
-    status === "over" ?
-    _.update(_, "players", rank) :
-    _.identity);
+  return {...state, rolled: [], banked: [], status, up: n >= _.count(players) ? 0 : n};
 }
 
 export function score(player){

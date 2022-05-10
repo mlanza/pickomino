@@ -5,11 +5,34 @@ body {
 [data-status="banked"] .dice ul:first-child {
   opacity: .3;
 }
-[data-status="failure"] .dice {
+[data-status="failure"] .dice li {
   opacity: .3;
   color: red;
 }
-
+.dice {
+  position: relative;
+}
+.winner,
+.fail {
+  visibility: hidden;
+  margin-top: -1.5em;
+  text-align: center;
+  font-family: Oswald;
+  font-size: 5em;
+  color: red;
+  z-index: 2;
+  position: absolute;
+  width: 100%;
+}
+.winner {
+  color: black;
+}
+[data-status="failure"] .fail {
+  visibility: visible;
+}
+[data-status="over"] .winner {
+  visibility: visible;
+}
 [data-banked~="0"] li[data-value="0"],
 [data-banked~="1"] li[data-value="1"],
 [data-banked~="2"] li[data-value="2"],
@@ -285,6 +308,7 @@ li.tile[data-worms="4"] .worms::after {
 .dice {
   text-align: center;
   font-family: Oswald;
+  z-index: 1;
 }
 .dice ul > li {
   display: inline-block;
@@ -298,7 +322,7 @@ li.tile[data-worms="4"] .worms::after {
   text-align: center;
   box-shadow: 0 3px 10px rgb(0 0 0 / 0.5);
 }
-.dice ul + ul {
+.dice ul + ul > li {
   font-size: 1.3em;
 }
 .players li[data-active] .roll {

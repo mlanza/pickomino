@@ -7,6 +7,7 @@ const el = dom.sel1("#pickomino"),
       tiles = dom.sel1(".tiles", el),
       r = dom.sel1(".roll", el),
       dice = dom.sel1(".dice", el),
+      wins = dom.sel1(".winner", el),
       players = dom.sel1(".players", el);
 
 const ul = dom.tag("ul"),
@@ -45,15 +46,17 @@ function renderDice(state){
 }
 
 function renderPlayers(state){
-  return [
-    div({class: "winner"}, _.chain(state.players, winner, _.get(_, "name"), _.str(_, " wins!"))),
-    ul(_.mapIndexed(function(idx, player){
+  return ul(_.mapIndexed(function(idx, player){
       return li({name: player.name, "data-active": idx === state.up},
         div({class: "score"}, player.score),
         div({class: "roll"}, "🎲"),
         div({class: "name"}, player.name),
         ul({class: "stack"}, _.mapa(renderTile, player.stack)));
-  }, state.players))];
+  }, state.players));
+}
+
+function renderWinner(state){
+  return _.chain(state.players, winner, _.get(_, "name"), _.str(_, " wins!"));
 }
 
 function move(start, end){
@@ -98,6 +101,7 @@ $.sub($hist, function([current, prior]){
   dom.html(tiles, renderTiles(current));
   dom.html(dice, renderDice(current));
   dom.html(players, renderPlayers(current));
+  dom.html(wins, renderWinner(current));
 
   /*
   const t23 = dom.sel1("#tile-23"),
