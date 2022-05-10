@@ -4,7 +4,7 @@ export function init(names){
   const up = 0;
   const status = "ready";
   const players = _.mapa(function(name){
-    return {name, stack: []};
+    return {name, stack: [], score: 0, best: null};
   }, names);
   const rolled = [];
   const banked = [];
@@ -35,7 +35,8 @@ export function fail(state){
       return t.rank < tile.rank;
     }, tiles));
     return _.chain(state,
-      _.updateIn(_, ["players", up, "stack"], _.rest),
+      _.updateIn(_, ["players", up, "stack"], _.comp(_.toArray, _.rest)),
+      _.updateIn(_, ["players", up], score),
       _.update(_, "tiles", _.pipe(
         _.splice(_, ref, [tile]),
         _.toArray,
@@ -84,11 +85,29 @@ export function exposed(players, up, r){
   }, players));
 }
 
+export function rank(players){
+  const ranked = _.sort(_.desc(_.get(_, "score")), _.desc(_.get(_, "best")), players);
+  return _.mapa(function(player){
+    return Object.assign(player, {pos: _.indexOf(ranked, player) + 1});
+  }, players);
+}
+
 export function finish(state){
   const {up, players, tiles} = state;
   const n = up + 1;
   const status = _.count(tiles) ? "ready" : "over";
-  return {...state, rolled: [], banked: [], status, up: n >= _.count(players) ? 0 : n};
+  return _.chain({...state, rolled: [], banked: [], status, up: n >= _.count(players) ? 0 : n},
+    status === "over" ?
+    _.update(_, "players", rank) :
+    _.identity);
+}
+
+export function score(player){
+  const score = _.sum(_.map(_.get(_, "worms"), _.get(player, "stack")));
+  const best = _.last(_.sort(_.mapa(_.get(_, "rank"), _.get(player, "stack")))) || null;
+  return _.chain(player,
+    _.assoc(_, "score", score),
+    _.assoc(_, "best", best));
 }
 
 export function claim(r){
@@ -99,7 +118,8 @@ export function claim(r){
     }, tiles);
     return r <= worth(banked) && _.count(took) && hasWorm(banked) ?
       _.chain(state,
-        _.updateIn(_, ["players", up, "stack"], _.prepend(_, _.first(took))),
+        _.updateIn(_, ["players", up, "stack"], _.comp(_.toArray, _.prepend(_, _.first(took)))),
+        _.updateIn(_, ["players", up], score),
         _.assocIn(_, ["tiles"], left),
         finish) :
       state;
@@ -114,7 +134,9 @@ export function steal(v){
     return v === worth(banked) && at !== null ?
       _.chain(state,
         _.updateIn(_, ["players", at, "stack"], _.comp(_.toArray, _.rest)),
-        _.updateIn(_, ["players", up, "stack"], _.prepend(_, tile)),
+        _.updateIn(_, ["players", at], score),
+        _.updateIn(_, ["players", up, "stack"], _.comp(_.toArray, _.prepend(_, tile))),
+        _.updateIn(_, ["players", up], score),
         finish) :
       state;
   }

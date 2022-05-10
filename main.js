@@ -47,7 +47,9 @@ function renderDice(state){
 function renderPlayers(state){
   return ul(_.mapIndexed(function(idx, player){
     return li({name: player.name, "data-active": idx === state.up},
+      div({class: "pos"}, player.pos),
       div({class: "roll"}, "🎲"),
+      div({class: "score"}, player.score),
       div({class: "name"}, player.name),
       ul({class: "stack"}, _.mapa(renderTile, player.stack)));
   }, state.players));

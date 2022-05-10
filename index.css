@@ -9,6 +9,7 @@ body {
   opacity: .3;
   color: red;
 }
+
 [data-banked~="0"] li[data-value="0"],
 [data-banked~="1"] li[data-value="1"],
 [data-banked~="2"] li[data-value="2"],
@@ -225,8 +226,8 @@ ul.stack:hover li.tile + li.tile + li.tile + li.tile + li.tile + li.tile + li.ti
   text-align: center;
 }
 .players .name {
-  font-family: "Oswald";
   font-size: 1.4em;
+  font-family: Oswald;
 }
 .players > ul > li {
   display: inline-block;
@@ -308,4 +309,24 @@ li.tile[data-worms="4"] .worms::after {
 }
 [data-status="success"] .players li[data-active="true"] .roll {
   opacity: .3;
+}
+.players .pos {
+  visibility: hidden;
+  font-family: Oswald;
+  font-size: 2em;
+  height: 2em;
+}
+.players .score {
+  display: none;
+  font-family: Oswald;
+  font-size: 3em;
+}
+[data-status="over"] .players .pos {
+  visibility: visible;
+}
+[data-status="over"] .players .score {
+  display: inherit;
+}
+[data-status="over"] .players .roll {
+  display: none;
 }
