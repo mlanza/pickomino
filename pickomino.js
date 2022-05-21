@@ -9,7 +9,8 @@ export function init(names){
   const rolled = [];
   const banked = [];
   const removed = [];
-  return {up, status, rolled, banked, players, tiles, removed};
+  const actions = [];
+  return {up, status, rolled, banked, players, tiles, removed, actions};
 }
 
 export const tiles = _.mapa(function(worms, rank){
@@ -143,3 +144,32 @@ export function steal(v){
       state;
   }
 }
+
+function cmd1(cmd){
+  return ({
+    "roll": roll,
+    "bank": bank,
+    "claim": claim,
+    "steal": steal
+  })[cmd];
+}
+
+function cmd2(cmd, args){
+  return cmd1(cmd)(...args);
+}
+
+export const cmd = _.overload(null, cmd1, cmd2);
+
+function dispatch2(player, type){
+  return _.chain(_,
+    _.update(_, "actions", _.cons({player, type}, _)),
+    cmd(type));
+}
+
+function dispatch3(player, type, args){
+  return _.chain(_,
+    _.update(_, "actions", _.cons({player, type, args}, _)),
+    cmd(type, args));
+}
+
+export const dispatch = _.overload(null, null, dispatch2, dispatch3);

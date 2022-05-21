@@ -82,26 +82,27 @@ function move(start, end){
 }
 
 $.on(el, "click", "div.roll", function(e){
-  _.swap($state, p.roll);
+  _.swap($state, p.dispatch(_.deref($state).up, "roll"));
 });
 
 $.on(dice, "click", "ul:first-child > li", function(e){
   const text = dom.text(e.target);
   const value = text === "🪱" ? 0 : parseInt(text);
-  _.swap($state, p.bank(value));
-})
+  _.swap($state, p.dispatch(_.deref($state).up, "bank", [value]));
+});
 
 $.on(tiles, "click", ".tile", function(e){
   const rank = parseInt(dom.attr(this, "data-rank"));
-  _.swap($state, p.claim(rank));
+  _.swap($state, p.dispatch(_.deref($state).up, "claim", [rank]));
 });
 
 $.on(players, "click", ".stack .tile", function(e){
   const rank = parseInt(dom.attr(this, "data-rank"));
-  _.swap($state, p.steal(rank));
+  _.swap($state, p.dispatch(_.deref($state).up, "steal", [rank]));
 });
 
 $.sub($hist, function([current, prior]){
+  _.log("=>", [current, prior], "action", _.chain(current, _.get(_, "actions"), _.first));
   dom.attr(el, "data-status", current.status);
   dom.html(tiles, renderTiles(current));
   dom.html(dice, renderDice(current));
