@@ -55,11 +55,13 @@ h1 {
 .dice {
   height: 7em;
 }
+.dice ul {
+  margin: 1em;
+  display: inline;
+  line-height: 8em;
+}
 .dice li {
   background-color: white;
-}
-.dice ul:first-child {
-  margin: 1em;
 }
 .dice ul:first-child > li {
   cursor: pointer;
@@ -290,19 +292,19 @@ li.tile .rank {
   font-family: Lobster, cursive;
 }
 li.tile .worms {
-  font-size: 1.25em;
+  font-size: 1em;
 }
 li.tile[data-worms="1"] .worms::after {
-  content: "🪱"
+  content: "🐛"
 }
 li.tile[data-worms="2"] .worms::after {
-  content: "🪱🪱"
+  content: "🐛🐛"
 }
 li.tile[data-worms="3"] .worms::after {
-  content: "🪱🪱🪱"
+  content: "🐛🐛🐛"
 }
 li.tile[data-worms="4"] .worms::after {
-  content: "🪱🪱🪱🪱"
+  content: "🐛🐛🐛🐛"
 }
 .tiles {
   margin-bottom: 2em;

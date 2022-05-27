@@ -3,6 +3,8 @@ import _ from "./lib/@atomic/core.js";
 import $ from "./lib/@atomic/reactives.js";
 import dom from "./lib/@atomic/dom.js";
 
+const WORM = "🐛";
+
 const el = dom.sel1("#pickomino"),
       tiles = dom.sel1(".tiles", el),
       r = dom.sel1(".roll", el),
@@ -40,7 +42,7 @@ function renderTiles(state){
 }
 
 function renderDie(die){
-  return li({"data-value": die}, die ? die : "🪱");
+  return li({"data-value": die}, die ? die : WORM);
 }
 
 function renderDice(state){
@@ -64,30 +66,13 @@ function renderWinner(state){
   return _.chain(state.players, p.winner, _.get(_, "name"), _.str(_, " wins!"));
 }
 
-function move(start, end){
-  const [sx, sy] = getOffset(start),
-        [ex, ey] = getOffset(end);
-  const p = _.parent(start);
-  const el = _.doto(_.clone(start), dom.addClass(_, "start"));
-  const css = `.start { position: absolute; left: ${sx}px; top: ${sy}px;} .end { left: ${ex}px; top: ${ey}px; transition: all .6s ease-in-out;}`;
-  const s = style(css);
-  dom.append(document.body, s, el);
-  setTimeout(function(){
-    dom.addClass(start, "taken");
-    dom.addClass(el, "end");
-    setTimeout(function(){
-      //dom.omit(el);
-    }, 600)
-  }, 10)
-}
-
 $.on(el, "click", "div.roll", function(e){
   _.swap($state, p.dispatch(_.deref($state).up, "roll"));
 });
 
 $.on(dice, "click", "ul:first-child > li", function(e){
   const text = dom.text(e.target);
-  const value = text === "🪱" ? 0 : parseInt(text);
+  const value = text === WORM ? 0 : parseInt(text);
   _.swap($state, p.dispatch(_.deref($state).up, "bank", [value]));
 });
 
@@ -101,13 +86,61 @@ $.on(players, "click", ".stack .tile", function(e){
   _.swap($state, p.dispatch(_.deref($state).up, "steal", [rank]));
 });
 
+function move(from, to, f){
+  const [fx, fy] = getOffset(from),
+        [tx, ty] = getOffset(to);
+  const p = _.parent(from);
+  const el = _.doto(_.clone(from), f, dom.addClass(_, "from"));
+  const css = style(`
+  .from {
+    position: absolute;
+    left: ${fx}px;
+    top: ${fy}px;
+    z-index: 1000;
+  }
+  .to {
+    left: ${tx}px;
+    top: ${ty}px;
+    transition: all .8s ease-in-out;
+  }`);
+  to.style.visibility = "hidden";
+  dom.append(document.body, css, el);
+  setTimeout(function(){
+    dom.addClass(el, "to");
+    setTimeout(function(){
+      dom.omit(el);
+      to.style.visibility = "visible";
+    }, 800)
+  }, 10)
+}
+
+function claim(from, to){
+  move(from, to, dom.attr(_, "data-status", "unclaimed"))
+}
+
 $.sub($hist, function([current, prior]){
-  _.log("=>", [current, prior], "action", _.chain(current, _.get(_, "actions"), _.first));
+  const action = _.chain(current, _.get(_, "actions"), _.first);
+  _.log("=>", [current, prior], "action", action);
   dom.attr(el, "data-status", current.status);
   dom.html(tiles, renderTiles(current));
   dom.html(dice, renderDice(current));
   dom.html(players, renderPlayers(current));
   dom.html(wins, renderWinner(current));
+
+  switch(action?.type){
+    case "claim":
+      const id = action.args[0];
+      const from = dom.sel1(`.tiles li[id="tile-${id}"]`);
+      const to = dom.sel1(`.players li[id="tile-${id}"]`);
+      claim(from, to);
+      break;
+    case "steal":
+      /*const id = action.args[0];
+      const from = dom.sel1(`.players li[id="tile-${id}"]`);
+      const to = dom.sel1(`.players li[id="tile-${id}"]`);
+      claim(from, to);*/
+
+  }
 
   /*
   const t23 = dom.sel1("#tile-23"),
