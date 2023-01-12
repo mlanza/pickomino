@@ -1,7 +1,7 @@
 import * as p from "./pickomino.js";
-import _ from "./lib/@atomic/core.js";
-import $ from "./lib/@atomic/reactives.js";
-import dom from "./lib/@atomic/dom.js";
+import _ from "./lib/atomic_/core.js";
+import $ from "./lib/atomic_/reactives.js";
+import dom from "./lib/atomic_/dom.js";
 
 const WORM = "🐛";
 

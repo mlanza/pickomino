@@ -1,4 +1,4 @@
-import _ from "./lib/@atomic/core.js";
+import _ from "./lib/atomic_/core.js";
 
 export function init(names){
   const up = 0;
