@@ -12,11 +12,7 @@ const el = dom.sel1("#pickomino"),
       wins = dom.sel1(".winner", el),
       players = dom.sel1(".players", el);
 
-const ul = dom.tag("ul"),
-      li = dom.tag("li"),
-      div = dom.tag("div"),
-      span = dom.tag("span"),
-      style = dom.tag("style");
+const {ul, li, div, span, style} = dom.tags(["ul", "li", "div", "span", "style"]);
 
 function getOffset(el) {
   const rect = el.getBoundingClientRect();
