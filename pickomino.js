@@ -1,4 +1,4 @@
-import _ from "./lib/atomic_/core.js";
+import _ from "./libs/atomic_/core.js";
 
 export function init(names){
   const up = 0;
@@ -50,7 +50,7 @@ export function fail(state){
         _.splice(_, ref, [tile]),
         _.toArray)),
         flip,
-        _.see("flipped"),
+        $.see("flipped"),
         finish);
   } else {
     return finish(state);

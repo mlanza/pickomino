@@ -1,7 +1,8 @@
+import _ from "./libs/atomic_/core.js";
+import $ from "./libs/atomic_/shell.js";
+import dom from "./libs/atomic_/dom.js";
+import {reg} from "./libs/cmd.js";
 import * as p from "./pickomino.js";
-import _ from "./lib/atomic_/core.js";
-import $ from "./lib/atomic_/reactives.js";
-import dom from "./lib/atomic_/dom.js";
 
 const WORM = "🐛";
 
@@ -12,11 +13,7 @@ const el = dom.sel1("#pickomino"),
       wins = dom.sel1(".winner", el),
       players = dom.sel1(".players", el);
 
-const ul = dom.tag("ul"),
-      li = dom.tag("li"),
-      div = dom.tag("div"),
-      span = dom.tag("span"),
-      style = dom.tag("style");
+const {ul, li, div, span, style} = dom.tags(["ul", "li", "div", "span", "style"]);
 
 function getOffset(el) {
   const rect = el.getBoundingClientRect();
@@ -24,8 +21,9 @@ function getOffset(el) {
 }
 
 const params = (new URL(document.location)).searchParams;
-const $state = $.cell(p.init(params.get('players').split(",")));
-Object.assign(window, {_, $, dom}, {$state});
+const $state = $.atom(p.init(params.get('players').split(",")));
+
+reg({$state, p});
 
 const $hist = $.hist($state);
 
@@ -67,30 +65,30 @@ function renderWinner(state){
 }
 
 $.on(el, "click", "div.roll", function(e){
-  _.swap($state, p.dispatch(_.deref($state).up, "roll"));
+  $.swap($state, p.dispatch(_.deref($state).up, "roll"));
 });
 
 $.on(dice, "click", "ul:first-child > li", function(e){
   const text = dom.text(e.target);
   const value = text === WORM ? 0 : parseInt(text);
-  _.swap($state, p.dispatch(_.deref($state).up, "bank", [value]));
+  $.swap($state, p.dispatch(_.deref($state).up, "bank", [value]));
 });
 
 $.on(tiles, "click", ".tile", function(e){
   const rank = parseInt(dom.attr(this, "data-rank"));
-  _.swap($state, p.dispatch(_.deref($state).up, "claim", [rank]));
+  $.swap($state, p.dispatch(_.deref($state).up, "claim", [rank]));
 });
 
 $.on(players, "click", ".stack .tile", function(e){
   const rank = parseInt(dom.attr(this, "data-rank"));
-  _.swap($state, p.dispatch(_.deref($state).up, "steal", [rank]));
+  $.swap($state, p.dispatch(_.deref($state).up, "steal", [rank]));
 });
 
 function move(from, to, f){
   const [fx, fy] = getOffset(from),
         [tx, ty] = getOffset(to);
   const p = _.parent(from);
-  const el = _.doto(_.clone(from), f, dom.addClass(_, "from"));
+  const el = $.doto(_.clone(from), f, dom.addClass(_, "from"));
   const css = style(`
   .from {
     position: absolute;
@@ -118,14 +116,13 @@ function claim(from, to){
   move(from, to, dom.attr(_, "data-status", "unclaimed"))
 }
 
-$.sub($hist, function([current, prior]){
-  const action = _.chain(current, _.get(_, "actions"), _.first);
-  _.log("=>", [current, prior], "action", action);
-  dom.attr(el, "data-status", current.status);
-  dom.html(tiles, renderTiles(current));
-  dom.html(dice, renderDice(current));
-  dom.html(players, renderPlayers(current));
-  dom.html(wins, renderWinner(current));
+$.sub($hist, function([curr, prior]){
+  const action = _.chain(curr, _.get(_, "actions"), _.first);
+  dom.attr(el, "data-status", curr.status);
+  dom.html(tiles, renderTiles(curr));
+  dom.html(dice, renderDice(curr));
+  dom.html(players, renderPlayers(curr));
+  dom.html(wins, renderWinner(curr));
 
   switch(action?.type){
     case "claim":
